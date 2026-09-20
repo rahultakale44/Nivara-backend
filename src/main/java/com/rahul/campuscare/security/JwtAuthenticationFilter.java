@@ -32,33 +32,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String authHeader = request.getHeader("Authorization");
 
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+
+            if (jwtService.isTokenValid(token)) {
+                String email = jwtService.extractEmail(token);
+                String role = jwtService.extractRole(token);
+
+                SimpleGrantedAuthority authority =
+                        new SimpleGrantedAuthority("ROLE_" + role);
+
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(
+                                email,
+                                null,
+                                List.of(authority)
+                        );
+
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            // If token is invalid, don't set authentication - let Spring Security handle it
         }
-
-        String token = authHeader.substring(7);
-
-        if (!jwtService.isTokenValid(token)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Invalid or expired token");
-            return;
-        }
-
-        String email = jwtService.extractEmail(token);
-        String role = jwtService.extractRole(token);
-
-        SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority("ROLE_" + role);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        email,
-                        null,
-                        List.of(authority)
-                );
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        // If no auth header, don't set authentication - let Spring Security handle it
 
         filterChain.doFilter(request, response);
     }

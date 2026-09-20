@@ -10,11 +10,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.rahul.campuscare.dto.ComplaintResponse;
 import com.rahul.campuscare.dto.CreateComplaintRequest;
 import com.rahul.campuscare.dto.UpdateComplaintStatusRequest;
-import com.rahul.campuscare.entity.Complaint;
 import com.rahul.campuscare.service.ComplaintService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,29 +26,29 @@ public class ComplaintController {
     private final ComplaintService complaintService;
 
     @PostMapping
-    public Complaint createComplaint(@RequestBody CreateComplaintRequest request) {
+    public ComplaintResponse createComplaint(@Valid @RequestBody CreateComplaintRequest request) {
         return complaintService.createComplaint(request);
     }
 
     @GetMapping("/my")
-    public List<Complaint> getMyComplaints() {
+    public List<ComplaintResponse> getMyComplaints() {
         return complaintService.getMyComplaints();
     }
 
     @GetMapping
-    public List<Complaint> getAllComplaints() {
+    public List<ComplaintResponse> getAllComplaints() {
         return complaintService.getAllComplaints();
     }
 
     @GetMapping("/{id}")
-    public Complaint getComplaintById(@PathVariable Long id) {
+    public ComplaintResponse getComplaintById(@PathVariable Long id) {
         return complaintService.getComplaintById(id);
     }
 
     @PutMapping("/{id}/status")
-    public Complaint updateStatus(
+    public ComplaintResponse updateStatus(
             @PathVariable Long id,
-            @RequestBody UpdateComplaintStatusRequest request) {
+            @Valid @RequestBody UpdateComplaintStatusRequest request) {
 
         return complaintService.updateStatus(
                 id,

@@ -41,6 +41,10 @@ public class Complaint {
     @Enumerated(EnumType.STRING)
     private ComplaintStatus status;
 
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private Priority priority = Priority.MEDIUM;
+
     private LocalDateTime createdAt;
 
     // NEW FIELD FOR IMAGE UPLOAD
@@ -53,4 +57,8 @@ public class Complaint {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 }
