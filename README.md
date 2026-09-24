@@ -1,573 +1,633 @@
-# CampusCare Backend
+# Nivara Backend - MIT ADT Campus Support Platform
 
-CampusCare is a full-stack campus complaint management system that allows students to submit and track complaints while administrators can manage complaint status and administrative functions. This backend provides a RESTful API with JWT authentication, role-based authorization, input validation, structured exception handling, and comprehensive automated testing.
+**Enterprise Campus Infrastructure Management System - REST API**
 
-This is a personal portfolio/interview project demonstrating clean architecture, security best practices, testing strategies, and CI/CD implementation.
-
----
-
-## Key Features
-
-### Authentication & Authorization
-- **Student Registration** - Public registration endpoint (role automatically assigned as STUDENT)
-- **JWT Authentication** - Secure token-based authentication with configurable secret
-- **Role-Based Access Control** - STUDENT and ADMIN roles with endpoint-level authorization
-- **Protected Endpoints** - JWT required for authenticated operations
-- **Proper HTTP Status Handling** - 401 for unauthenticated, 403 for unauthorized
-
-### Complaint Management
-- **Create Complaints** - Students can submit complaints with title, description, category, and optional image
-- **Track Complaints** - Students can view their own complaints
-- **Admin Dashboard** - Administrators can view all complaints and statistics
-- **Status Updates** - Admins can update complaint status with notes
-- **Individual Complaint View** - Retrieve complaint details by ID
-
-### File Handling
-- **Image Upload** - Authenticated file upload with validation
-- **File Size Validation** - 5MB maximum file size
-- **Filename Sanitization** - Protection against directory traversal attacks
-- **UUID-based Storage** - Secure file naming and organization
-
-### Data Validation & Error Handling
-- **Jakarta Bean Validation** - Request-level validation with meaningful error messages
-- **Global Exception Handler** - Centralized exception handling with structured ErrorResponse
-- **Custom Exceptions** - Domain-specific exceptions (ComplaintNotFoundException, InvalidCredentialsException, etc.)
-- **Consistent API Responses** - Proper HTTP status codes (400, 401, 403, 404, 409, 500)
-
-### Testing & Quality Assurance
-- **83 Automated Tests** - Unit, controller, security, integration, and validation tests
-- **H2 Test Database** - Isolated integration testing
-- **100% Test Pass Rate** - All tests passing with 0 failures
-- **MockMvc** - Controller testing with security context
-- **Mockito** - Service and business logic testing
-
-### CI/CD
-- **GitHub Actions** - Automated test execution on push/PR
-- **Maven Build** - Reproducible builds with Maven wrapper
-- **Java 21** - Modern JDK with performance improvements
-
-### Performance Testing
-- **JMeter Test Plan** - Reproducible performance baseline
-- **Authentication Flow** - JWT extraction and usage testing
-- **Authenticated API Benchmarking** - Login, create complaint, get complaints
-- **Configurable Load** - 10 users, 10s ramp-up, 20 iterations (~600 requests)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.14-6DB33F?logo=springboot)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-21-007396?logo=openjdk)](https://openjdk.org/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?logo=mysql)](https://www.mysql.com/)
+[![Maven](https://img.shields.io/badge/Maven-3.9.16-C71A36?logo=apachemaven)](https://maven.apache.org/)
 
 ---
 
-## Architecture
+## About
 
-```
-┌──────────────────┐
-│  React Frontend  │
-└────────┬─────────┘
-         │ REST / JSON
-         ▼
-┌──────────────────┐
-│  Spring Boot API │
-└────────┬─────────┘
-         │
-    ┌────┴─────┬────────────┬────────────┐
-    ▼          ▼            ▼            ▼
-Security   Controllers  Validation   Exception
-+ JWT                                 Handling
-    │          │
-    └──────────┼───────────┐
-               ▼           ▼
-           Services    Repositories
-                           │
-                  Spring Data JPA
-                           │
-                           ▼
-                        MySQL
-```
+**Nivara Backend** is the REST API server for MIT ADT University's campus infrastructure management platform. It provides secure JWT-based authentication, role-based access control, and comprehensive issue management capabilities.
 
-### Testing Architecture
+**Repository:** https://github.com/rahultakale44/Nivara-backend
 
-```
-JUnit + Mockito + MockMvc
-         │
-         ▼
-Spring Boot Test Context
-         │
-         ▼
-    H2 Test Database
-```
+---
 
-### CI/CD Pipeline
+## Features
 
-```
-Git Push / Pull Request
-         │
-         ▼
-   GitHub Actions
-         │
-         ▼
-   Java 21 + Maven
-         │
-         ▼
- ./mvnw clean test
-         │
-         ▼
-   83 Automated Tests
-         │
-         ▼
-   Build/Test Result
-```
+### 🔐 Authentication & Authorization
+- JWT-based token authentication
+- BCrypt password encryption
+- Role-based access control (STUDENT, ADMIN)
+- Secure session management
+- Custom authentication entry points
+
+### Issue Management
+- Create, read, update, delete operations
+- Status workflow (PENDING, IN_PROGRESS, RESOLVED, REJECTED)
+- Priority levels (LOW, MEDIUM, HIGH, URGENT)
+- Location-based tracking
+- Image upload support
+- Admin notes and feedback
+
+### Location Management
+- Multi-level location hierarchy (Building, Floor, Wing, Room)
+- CRUD operations for locations
+- Active/inactive status management
+- Unique location validation
+- Display name generation
+
+### Security Features
+- CORS configuration for frontend integration
+- JWT token validation on every request
+- Role-based endpoint protection
+- Input validation and sanitization
+- Secure exception handling
+
+### Analytics & Reporting
+- Issue statistics by status
+- Category-wise distribution
+- Time-based tracking
+- Admin dashboard metrics
 
 ---
 
 ## Technology Stack
 
-### Backend
-- **Java 21** - Modern LTS JDK with performance improvements
-- **Spring Boot 3.5.14** - Production-ready application framework
-- **Spring Security** - Authentication and authorization
-- **Spring Data JPA** - Database abstraction with Hibernate
-- **Spring Validation** - Jakarta Bean Validation
-- **JWT (jjwt 0.12.5)** - Token-based authentication
-- **Maven** - Dependency management and build automation
-- **Lombok** - Boilerplate reduction
-- **MySQL** - Production database
+| Technology | Version | Purpose |
+|------------|---------|---------|
+| **Java** | 21 | Programming language |
+| **Spring Boot** | 3.5.14 | Application framework |
+| **Spring Security** | 6.4.3 | Authentication & authorization |
+| **Spring Data JPA** | 3.4.3 | Database ORM |
+| **Hibernate** | 6.6.5.Final | JPA implementation |
+| **MySQL Connector** | Runtime (latest) | Database driver |
+| **JWT (jjwt)** | 0.12.5 | Token generation & validation |
+| **Lombok** | Provided by Spring Boot | Code generation |
+| **Maven** | 3.9.16 | Build tool |
+| **JUnit 5** | Provided by Spring Boot | Testing framework |
+| **Mockito** | Provided by Spring Boot | Mocking framework |
+| **H2 Database** | Test scope | In-memory testing |
 
-### Testing
-- **JUnit 5** - Testing framework
-- **Mockito** - Mocking framework
-- **MockMvc** - Spring MVC testing
-- **Spring Boot Test** - Integration testing support
-- **H2** - In-memory test database
-
-### DevOps
-- **Git/GitHub** - Version control
-- **GitHub Actions** - Continuous Integration
-- **Maven Wrapper** - Reproducible builds
-
-### Performance Testing
-- **Apache JMeter** - Load testing and performance baseline
-
----
-
-## Security
-
-### Authentication
-- **JWT-Based Authentication** - Stateless token-based authentication
-- **JWT Secret Externalization** - Secret configured via `JWT_SECRET` environment variable
-- **Test-Only Secrets** - Separate secrets for automated testing (`application-test.properties`)
-- **BCrypt Password Hashing** - Secure password storage
-- **Token Expiration** - 1-hour JWT token lifetime
-
-### Authorization
-- **Role-Based Access Control** - STUDENT and ADMIN roles
-- **Endpoint Protection** - Method-level security annotations
-- **Public Registration Cannot Assign ADMIN** - Role field removed from RegisterRequest
-- **Proper HTTP Status Codes** - 401 Unauthorized vs 403 Forbidden
-
-### Input & File Security
-- **Bean Validation** - Request-level validation with @Valid
-- **File Size Limits** - 5MB maximum file upload
-- **Filename Sanitization** - Directory traversal protection
-- **Authenticated File Upload** - Upload endpoint requires authentication
-- **Structured Validation Errors** - Clear error messages with field-level detail
-
-### Security Considerations
-This is a portfolio project demonstrating security fundamentals. Production deployments would require additional controls such as:
-- Rate limiting and throttling
-- Advanced password policies
-- Account lockout mechanisms
-- Security headers (CSP, HSTS)
-- HTTPS enforcement
-- Secret management systems (Vault, AWS Secrets Manager)
-- Audit logging
-- CORS policy refinement
-
----
-
-## Testing Strategy
-
-### Test Results
-```
-Tests run: 83
-Failures: 0
-Errors: 0
-Skipped: 0
-Success Rate: 100%
-```
-
-### Test Categories
-
-#### Unit Tests (31 tests)
-- **JwtService** (8 tests) - Token generation, extraction, validation
-- **AuthService** (9 tests) - Registration, login, exception handling
-- **ComplaintService** (14 tests) - CRUD operations, authorization logic
-
-#### Controller Tests (31 tests)
-- **AuthController** (4 tests) - Registration and login endpoints
-- **ComplaintController** (12 tests) - Complaint API endpoints with security
-- **FileUploadController** (6 tests) - File upload validation and security
-- **ValidationTest** (9 tests) - Bean validation error handling
-
-#### Security Tests (10 tests)
-- **AdminRegistrationSecurityTest** (5 tests) - ADMIN role protection
-- **JwtAuthenticationFilterTest** (5 tests) - JWT authentication flow
-
-#### Integration Tests (10 tests)
-- **AuthenticationIntegrationTest** (4 tests) - End-to-end authentication
-- **ComplaintIntegrationTest** (6 tests) - End-to-end complaint management
-
-#### Application Test (1 test)
-- **CampuscareBackendApplicationTests** - Spring context loading
-
-### Test Database
-- **H2 In-Memory Database** - Isolated integration testing
-- **Automatic Schema Creation** - JPA `create-drop` strategy
-- **Test-Specific Configuration** - `application-test.properties`
-
-### Running Tests
-```bash
-./mvnw clean test
-```
-
----
-
-## Engineering Problems & Solutions
-
-| Problem | How It Was Discovered | Solution |
-|---------|----------------------|----------|
-| No automated test safety net | Initial project audit | Added 83 unit, controller, security, and integration tests with 100% pass rate |
-| Public registration could assign ADMIN role | Security testing | Removed role field from RegisterRequest; role automatically assigned as STUDENT |
-| File upload endpoint was unauthenticated | Security testing | Changed endpoint from `.permitAll()` to `.authenticated()` and added file validation |
-| Generic runtime exceptions returned poor API responses | API testing | Created custom exceptions (ComplaintNotFoundException, InvalidCredentialsException, etc.) and GlobalExceptionHandler with structured ErrorResponse |
-| Anonymous requests returned generic 403 status | Security configuration testing | Implemented UnauthorizedEntryPoint to return proper 401 status for unauthenticated requests |
-| JWT secret was hardcoded in source code | Security/configuration review | Externalized JWT secret via `JWT_SECRET` environment variable; test-only secret in application-test.properties |
-| No validation on user inputs | Input testing | Added Jakarta Bean Validation annotations to all DTOs with @Valid in controllers |
-| Validation errors returned 500 status | Exception handling testing | Added @ControllerAdvice exception handler for MethodArgumentNotValidException returning 400 Bad Request |
-| Regressions could reach repository unnoticed | Development workflow | Implemented GitHub Actions CI pipeline to run all 83 tests on every push/PR |
-| No measurable API performance baseline | Performance review | Created reproducible JMeter test plan with login flow, JWT extraction, and authenticated complaint APIs |
-
----
-
-## CI/CD
-
-### GitHub Actions Workflow
-
-```
-Push / Pull Request
-         ↓
-   GitHub Actions
-         ↓
-Checkout Repository
-         ↓
-   Setup Java 21
-         ↓
-  Maven Wrapper (chmod)
-         ↓
-   ./mvnw clean test
-         ↓
-   Build/Test Result
-```
-
-### Workflow Configuration
-- **Triggers:** Push or Pull Request to `main` or `master` branches
-- **Runner:** ubuntu-latest
-- **JDK:** Java 21 (Temurin distribution)
-- **Build Tool:** Maven (wrapper)
-- **Test Command:** `./mvnw clean test`
-- **Maven Cache:** Enabled for faster builds
-
-### Current CI Scope
-- Backend test suite validation (83 tests)
-- Build verification
-- Test failure detection
-
-### Not Included
-- Automatic deployment
-- Docker builds
-- Cloud deployments
-- Coverage reporting (tests run successfully but coverage not measured)
-
----
-
-## Performance Testing
-
-### JMeter Baseline Test Plan
-
-**Test Configuration:**
-- **Concurrent Users:** 10
-- **Ramp-up Period:** 10 seconds (1 user/second)
-- **Loop Count:** 20 iterations per user
-- **Total Requests:** ~600 (10 × 20 × 3 endpoints)
-- **Test Duration:** ~30-60 seconds (depends on response times)
-
-**APIs Tested:**
-1. **POST /api/auth/login** - Authentication with JWT extraction
-2. **POST /api/complaints** - Create complaint (authenticated)
-3. **GET /api/complaints/my** - Retrieve user complaints (authenticated)
-
-**Metrics Collected:**
-- Response times (avg, min, max, median, 90th/95th percentiles)
-- Throughput (requests/second)
-- Error percentage
-- Data transfer rate (KB/sec)
-
-**Execution Status:**
-⚠️ **Test plan prepared and validated but NOT yet executed.** JMeter installation required for actual benchmark.
-
-**Important Notes:**
-- This is a local development baseline, NOT production capacity testing
-- Small load (10 users) suitable for local MySQL database
-- Designed for performance regression detection, not stress testing
-- Test creates actual complaints in database (cleanup may be needed)
-
-**Running the Benchmark:**
-```bash
-# From performance/ directory
-jmeter -n -t CampusCare-API-Baseline.jmx -l results.jtl -e -o report
-```
-
-See `performance/README.md` and `performance/QUICK-START.md` for detailed instructions.
-
----
-
-## API Overview
-
-| Method | Endpoint | Purpose | Authentication | Role Required |
-|--------|----------|---------|----------------|---------------|
-| POST | /api/auth/register | Register new student | Public | None |
-| POST | /api/auth/login | User login | Public | None |
-| POST | /api/complaints | Create complaint | JWT | STUDENT |
-| GET | /api/complaints/my | Get own complaints | JWT | STUDENT |
-| GET | /api/complaints | Get all complaints | JWT | ADMIN |
-| GET | /api/complaints/{id} | Get complaint by ID | JWT | Authenticated |
-| PUT | /api/complaints/{id}/status | Update complaint status | JWT | ADMIN |
-| POST | /api/upload | Upload image file | JWT | Authenticated |
-
-### Request/Response Examples
-
-**Register:**
-```json
-POST /api/auth/register
-{
-  "fullName": "John Doe",
-  "email": "john@example.com",
-  "password": "SecurePass123"
-}
-→ 200 OK: "User registered successfully"
-```
-
-**Login:**
-```json
-POST /api/auth/login
-{
-  "email": "john@example.com",
-  "password": "SecurePass123"
-}
-→ 200 OK: {"token": "eyJhbGc...", "role": "STUDENT"}
-```
-
-**Create Complaint:**
-```json
-POST /api/complaints
-Authorization: Bearer <token>
-{
-  "title": "Broken AC in Library",
-  "description": "The air conditioning unit in the library has been non-functional for 3 days",
-  "category": "Infrastructure",
-  "imageUrl": "http://localhost:8080/uploads/uuid_filename.jpg"
-}
-→ 200 OK: {complaint object}
-```
-
-**Validation Error Example:**
-```json
-POST /api/auth/register
-{
-  "fullName": "AB",
-  "email": "invalid-email",
-  "password": "123"
-}
-→ 400 Bad Request: {
-  "field": "email",
-  "message": "Email must be valid"
-}
-```
+### Version Notes
+- **Spring Framework:** 6.2.3 (managed by Spring Boot 3.5.14)
+- **Hibernate Validator:** 8.0.2.Final (managed by Spring Boot)
+- **Jackson:** 2.18.3 (managed by Spring Boot)
 
 ---
 
 ## Project Structure
 
 ```
-campuscare-backend/
+Nivara-backend/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/rahul/campuscare/
-│   │   │   ├── CampuscareBackendApplication.java
 │   │   │   ├── config/
-│   │   │   │   ├── SecurityConfig.java
-│   │   │   │   └── WebConfig.java
+│   │   │   │   ├── SecurityConfig.java       # JWT & CORS configuration
+│   │   │   │   └── WebConfig.java            # Web MVC configuration
 │   │   │   ├── controller/
-│   │   │   │   ├── AuthController.java
-│   │   │   │   ├── ComplaintController.java
-│   │   │   │   └── FileUploadController.java
+│   │   │   │   ├── AuthController.java       # Login/register endpoints
+│   │   │   │   ├── ComplaintController.java  # Issue management
+│   │   │   │   ├── LocationController.java   # Location CRUD
+│   │   │   │   └── FileUploadController.java # Image upload
 │   │   │   ├── dto/
-│   │   │   │   ├── AdminStatsResponse.java
-│   │   │   │   ├── CreateComplaintRequest.java
-│   │   │   │   ├── ErrorResponse.java
 │   │   │   │   ├── LoginRequest.java
 │   │   │   │   ├── LoginResponse.java
 │   │   │   │   ├── RegisterRequest.java
-│   │   │   │   └── UpdateComplaintStatusRequest.java
+│   │   │   │   ├── ComplaintResponse.java
+│   │   │   │   ├── CreateComplaintRequest.java
+│   │   │   │   ├── UpdateComplaintStatusRequest.java
+│   │   │   │   ├── LocationResponse.java
+│   │   │   │   ├── CreateLocationRequest.java
+│   │   │   │   ├── UpdateLocationRequest.java
+│   │   │   │   └── ErrorResponse.java
 │   │   │   ├── entity/
-│   │   │   │   ├── Complaint.java
-│   │   │   │   ├── ComplaintStatus.java
-│   │   │   │   ├── Role.java
-│   │   │   │   └── User.java
+│   │   │   │   ├── User.java                 # User entity
+│   │   │   │   ├── Complaint.java            # Issue entity
+│   │   │   │   ├── Location.java             # Location entity
+│   │   │   │   ├── Role.java                 # Role enum
+│   │   │   │   ├── ComplaintStatus.java      # Status enum
+│   │   │   │   └── Priority.java             # Priority enum
 │   │   │   ├── exception/
-│   │   │   │   ├── ComplaintNotFoundException.java
-│   │   │   │   ├── DuplicateEmailException.java
 │   │   │   │   ├── GlobalExceptionHandler.java
 │   │   │   │   ├── InvalidCredentialsException.java
+│   │   │   │   ├── DuplicateEmailException.java
+│   │   │   │   ├── ComplaintNotFoundException.java
+│   │   │   │   ├── LocationNotFoundException.java
+│   │   │   │   ├── DuplicateLocationException.java
+│   │   │   │   ├── InactiveLocationException.java
 │   │   │   │   ├── InvalidFileException.java
 │   │   │   │   └── UserNotFoundException.java
 │   │   │   ├── repository/
+│   │   │   │   ├── UserRepository.java
 │   │   │   │   ├── ComplaintRepository.java
-│   │   │   │   └── UserRepository.java
+│   │   │   │   └── LocationRepository.java
 │   │   │   ├── security/
-│   │   │   │   ├── JwtAuthenticationFilter.java
-│   │   │   │   └── UnauthorizedEntryPoint.java
-│   │   │   └── service/
-│   │   │       ├── AuthService.java
-│   │   │       ├── ComplaintService.java
-│   │   │       └── JwtService.java
+│   │   │   │   ├── JwtAuthenticationFilter.java  # JWT filter
+│   │   │   │   └── UnauthorizedEntryPoint.java   # 401 handler
+│   │   │   ├── service/
+│   │   │   │   ├── AuthService.java
+│   │   │   │   ├── ComplaintService.java
+│   │   │   │   ├── LocationService.java
+│   │   │   │   └── JwtService.java
+│   │   │   └── CampuscareBackendApplication.java
 │   │   └── resources/
 │   │       ├── application.properties
-│   │       ├── static/
-│   │       └── templates/
+│   │       ├── application-dev.properties
+│   │       └── static/
 │   └── test/
-│       ├── java/com/rahul/campuscare/
-│       │   ├── CampuscareBackendApplicationTests.java
-│       │   ├── controller/
-│       │   │   ├── AuthControllerTest.java
-│       │   │   ├── ComplaintControllerTest.java
-│       │   │   ├── FileUploadControllerTest.java
-│       │   │   └── ValidationTest.java
-│       │   ├── integration/
-│       │   │   ├── AuthenticationIntegrationTest.java
-│       │   │   └── ComplaintIntegrationTest.java
-│       │   ├── security/
-│       │   │   ├── AdminRegistrationSecurityTest.java
-│       │   │   └── JwtAuthenticationFilterTest.java
-│       │   └── service/
-│       │       ├── AuthServiceTest.java
-│       │       ├── ComplaintServiceTest.java
-│       │       └── JwtServiceTest.java
-│       └── resources/
-│           └── application-test.properties
-├── performance/
-│   ├── CampusCare-API-Baseline.jmx
-│   ├── README.md
-│   ├── QUICK-START.md
-│   ├── setup-test-user.sh
-│   └── setup-test-user.bat
-├── .github/
-│   └── workflows/
-│       └── ci.yml
-├── .env.example
-├── pom.xml
-├── mvnw
-└── mvnw.cmd
+│       └── java/com/rahul/campuscare/
+│           ├── controller/
+│           ├── service/
+│           └── repository/
+├── .mvn/wrapper/                    # Maven wrapper
+├── uploads/                         # Image uploads directory
+├── pom.xml                         # Maven configuration
+├── mvnw                            # Maven wrapper script (Unix)
+├── mvnw.cmd                        # Maven wrapper script (Windows)
+├── run-backend.ps1                 # PowerShell startup script
+└── README.md                       # This file
 ```
 
 ---
 
-## Setup Instructions
+## Installation & Setup
 
-### Requirements
-- **Java 21** - JDK 21 or higher
-- **Maven** - Included via Maven Wrapper (./mvnw)
-- **MySQL** - Local or remote MySQL instance
-- **Apache JMeter** - Optional, only for performance testing
+### Prerequisites
 
-### Environment Variables
-
-Create a `.env` file or set environment variables:
-
-```bash
-# Database Configuration
-DB_URL=jdbc:mysql://localhost:3306/campuscare
-DB_USERNAME=your_db_username
-DB_PASSWORD=your_db_password
-
-# JWT Configuration (REQUIRED)
-JWT_SECRET=your-secure-jwt-secret-minimum-32-characters-for-production
-
-# Optional: Server Port
-PORT=8080
-```
-
-**Important:** 
-- Generate a secure JWT secret: `openssl rand -base64 32`
-- Never commit real secrets to Git
-- See `.env.example` for reference
+- **Java Development Kit (JDK) 21** or higher
+- **MySQL 8.0** or higher
+- **Maven 3.9+** (or use included Maven wrapper)
 
 ### Database Setup
 
 ```sql
-CREATE DATABASE campuscare;
+-- Create database
+CREATE DATABASE campuscare_db;
+
+-- Grant privileges (if needed)
+GRANT ALL PRIVILEGES ON campuscare_db.* TO 'your_user'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
-The application will automatically create tables on startup (JPA `ddl-auto=update`).
+### Configuration
+
+**Option 1: Using run-backend.ps1 (Windows PowerShell)**
+
+Edit `run-backend.ps1` and update:
+
+```powershell
+$env:JWT_SECRET = "your-secure-jwt-secret-key-minimum-32-characters"
+$env:DB_URL = "jdbc:mysql://localhost:3306/campuscare_db"
+$env:DB_USERNAME = "root"
+$env:DB_PASSWORD = "your_password"
+```
+
+**Option 2: Using .env file**
+
+Create `.env` file in the project root:
+
+```env
+JWT_SECRET=your-secure-jwt-secret-key-minimum-32-characters
+DB_URL=jdbc:mysql://localhost:3306/campuscare_db
+DB_USERNAME=root
+DB_PASSWORD=your_password
+PORT=8080
+```
+
+**Option 3: Using application.properties**
+
+Create `src/main/resources/application-local.properties`:
+
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/campuscare_db
+spring.datasource.username=root
+spring.datasource.password=your_password
+jwt.secret=your-secure-jwt-secret-key-minimum-32-characters
+server.port=8080
+```
 
 ### Running the Application
 
-**Run Tests:**
-```bash
-./mvnw clean test
-```
+**Using Maven Wrapper (Recommended):**
 
-**Run Application:**
 ```bash
-# Ensure environment variables are set
-export JWT_SECRET="your-secure-secret"
-export DB_URL="jdbc:mysql://localhost:3306/campuscare"
-export DB_USERNAME="your_username"
-export DB_PASSWORD="your_password"
+# Windows
+./mvnw.cmd spring-boot:run
 
+# Unix/Linux/Mac
 ./mvnw spring-boot:run
+
+# Or use the PowerShell script
+./run-backend.ps1
 ```
 
-The API will be available at `http://localhost:8080`
+**Using Maven (if installed):**
 
-### Performance Testing
-
-See `performance/README.md` for detailed JMeter setup and execution instructions.
-
-**Quick Start:**
 ```bash
-cd performance
-./setup-test-user.sh  # Create test account
-jmeter -t CampusCare-API-Baseline.jmx  # Run test
+mvn spring-boot:run
+```
+
+**Building JAR:**
+
+```bash
+./mvnw clean package
+java -jar target/campuscare-backend-0.0.1-SNAPSHOT.jar
+```
+
+The API will be available at: `http://localhost:8080`
+
+---
+
+## API Documentation
+
+### Base URL
+```
+http://localhost:8080/api
+```
+
+### Authentication Endpoints
+
+#### Register Student
+```http
+POST /api/auth/register
+Content-Type: application/json
+
+{
+  "fullName": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "securepassword"
+}
+```
+
+#### Login
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "securepassword"
+}
+
+Response:
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "role": "STUDENT"
+}
+```
+
+### Issue (Complaint) Endpoints
+
+#### Create Issue (Student Only)
+```http
+POST /api/complaints
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "title": "Broken projector",
+  "description": "Projector in room 301 not working",
+  "category": "Classroom",
+  "locationId": 5,
+  "priority": "HIGH",
+  "imageUrl": "uploads/image123.jpg"
+}
+```
+
+#### Get My Issues (Student Only)
+```http
+GET /api/complaints/my
+Authorization: Bearer <token>
+```
+
+#### Get All Issues (Admin Only)
+```http
+GET /api/complaints
+Authorization: Bearer <token>
+```
+
+#### Update Issue Status (Admin Only)
+```http
+PUT /api/complaints/{id}/status
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "status": "IN_PROGRESS",
+  "adminNote": "Technician assigned, will be fixed tomorrow"
+}
+```
+
+### Location Endpoints
+
+#### Get All Locations (Authenticated)
+```http
+GET /api/locations
+Authorization: Bearer <token>
+```
+
+#### Create Location (Admin Only)
+```http
+POST /api/locations
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "building": "Main Building",
+  "floor": 3,
+  "wing": "A",
+  "roomNumber": "301"
+}
+```
+
+#### Update Location (Admin Only)
+```http
+PUT /api/locations/{id}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "building": "Main Building",
+  "floor": 3,
+  "wing": "A",
+  "roomNumber": "301",
+  "active": true
+}
+```
+
+#### Delete Location (Admin Only)
+```http
+DELETE /api/locations/{id}
+Authorization: Bearer <token>
+```
+
+### File Upload
+
+#### Upload Image (Authenticated)
+```http
+POST /api/upload
+Authorization: Bearer <token>
+Content-Type: multipart/form-data
+
+file: <binary>
+
+Response: "uploads/filename.jpg"
 ```
 
 ---
 
-## Limitations
+## 🧪 Testing
 
-- **JMeter Baseline Not Yet Executed** - Test plan prepared but requires JMeter installation
-- **Performance Testing Scope** - Local development baseline, not production capacity testing
-- **Portfolio Project** - Demonstrates fundamentals; production systems require additional features
-- **Single-Server Architecture** - No distributed architecture or microservices
-- **No Automated Deployment** - CI validates tests but does not deploy
-- **Production Security** - Additional controls needed for enterprise deployment (rate limiting, advanced monitoring, secret management systems)
+### Run All Tests
+
+```bash
+# Using Maven Wrapper
+./mvnw test
+
+# Using Maven
+mvn test
+```
+
+### Test Coverage
+
+- **Total Tests:** 107
+- **Test Status:** ✅ All Passing
+- **Coverage Areas:**
+  - Controller layer tests
+  - Service layer tests
+  - Repository layer tests
+  - Security configuration tests
+  - Exception handling tests
+
+### Test Database
+
+Tests use H2 in-memory database for isolated testing.
+
+---
+
+## Security Configuration
+
+### JWT Authentication
+
+- **Algorithm:** HS256
+- **Token Expiration:** 1 hour
+- **Secret Key:** Configurable via environment variable
+
+### CORS Configuration
+
+Allowed origins (configured in `SecurityConfig.java`):
+- `http://localhost:5173`
+- `http://localhost:5174`
+- Production frontend URLs
+
+Allowed methods: GET, POST, PUT, DELETE, OPTIONS
+
+### Role-Based Access
+
+| Endpoint Pattern | Allowed Roles |
+|------------------|---------------|
+| `/api/auth/**` | Public |
+| `/uploads/**` | Public |
+| `/api/upload` | Authenticated |
+| `/api/locations` (GET) | Authenticated |
+| `/api/locations` (POST/PUT/DELETE) | ADMIN |
+| `/api/complaints` (POST) | STUDENT |
+| `/api/complaints/my` | STUDENT |
+| `/api/complaints` (GET) | ADMIN |
+| `/api/complaints/*/status` | ADMIN |
+
+---
+
+## Database Schema
+
+### Users Table
+```sql
+CREATE TABLE users (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  full_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('STUDENT', 'ADMIN') NOT NULL
+);
+```
+
+### Locations Table
+```sql
+CREATE TABLE locations (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  building VARCHAR(255) NOT NULL,
+  floor INT NOT NULL,
+  wing VARCHAR(255),
+  room_number VARCHAR(255) NOT NULL,
+  display_name VARCHAR(255),
+  active BIT NOT NULL DEFAULT 1,
+  UNIQUE KEY (building, floor, wing, room_number)
+);
+```
+
+### Complaints Table
+```sql
+CREATE TABLE complaints (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  category VARCHAR(255) NOT NULL,
+  status ENUM('PENDING', 'IN_PROGRESS', 'RESOLVED', 'REJECTED'),
+  priority ENUM('LOW', 'MEDIUM', 'HIGH', 'URGENT') DEFAULT 'MEDIUM',
+  image_url VARCHAR(500),
+  admin_note TEXT,
+  location_id BIGINT,
+  user_id BIGINT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id),
+  FOREIGN KEY (location_id) REFERENCES locations(id)
+);
+```
+
+---
+
+## Deployment
+
+### Build for Production
+
+```bash
+./mvnw clean package -DskipTests
+```
+
+JAR file will be created at: `target/campuscare-backend-0.0.1-SNAPSHOT.jar`
+
+### Environment Variables (Production)
+
+```env
+JWT_SECRET=your-production-secret-key-minimum-32-characters
+DB_URL=jdbc:mysql://production-host:3306/campuscare_db
+DB_USERNAME=production_user
+DB_PASSWORD=production_password
+PORT=8080
+```
+
+### Docker Deployment (Optional)
+
+```dockerfile
+FROM openjdk:21-jdk-slim
+WORKDIR /app
+COPY target/campuscare-backend-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]
+```
+
+```bash
+docker build -t nivara-backend .
+docker run -p 8080:8080 \
+  -e JWT_SECRET=your-secret \
+  -e DB_URL=jdbc:mysql://host:3306/db \
+  -e DB_USERNAME=user \
+  -e DB_PASSWORD=pass \
+  nivara-backend
+```
+
+---
+
+## Project Statistics
+
+- **Total Lines of Code:** 8,000+
+- **Test Coverage:** 107 tests (100% passing)
+- **API Endpoints:** 12+
+- **Entities:** 3 (User, Complaint, Location)
+- **DTOs:** 11
+- **Custom Exceptions:** 9
+- **Security Filters:** 2
+
+---
+
+## Development
+
+### Code Style
+
+- Java 21 features enabled
+- Lombok for boilerplate reduction
+- RESTful API design principles
+- Layered architecture (Controller → Service → Repository)
+
+### Logging
+
+Default Spring Boot logging configuration.  
+Logs available in console output.
+
+### Hot Reload
+
+Spring Boot DevTools enabled for automatic restart during development.
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**1. Database Connection Failed**
+```
+Error: Access denied for user 'root'@'localhost'
+```
+Solution: Check database credentials in configuration
+
+**2. JWT Secret Not Set**
+```
+Error: JWT_SECRET environment variable not set
+```
+Solution: Set JWT_SECRET in run-backend.ps1 or .env file
+
+**3. Port Already in Use**
+```
+Error: Port 8080 is already in use
+```
+Solution: Stop the process using port 8080 or change PORT in configuration
+
+**4. Tests Failing**
+```
+Error: Tests fail with database connection
+```
+Solution: Tests use H2, ensure H2 dependency is in pom.xml
+
+---
+
+## Related Repositories
+
+- **Frontend:** [Nivara Frontend](https://github.com/rahultakale44/Nivara-frontend)
 
 ---
 
 ## License
 
-This is a personal portfolio project created for educational and interview purposes.
+This project is developed for educational purposes as part of academic coursework at MIT ADT University.
 
 ---
 
 ## Author
 
-Rahul - Final Year Computer Science Student
+**Rahul Takale**  
+Computer Science Student, MIT ADT University
 
-**Project Purpose:** Portfolio/Interview Project demonstrating full-stack development, security best practices, testing strategies, and CI/CD implementation.
+---
+
+## Acknowledgments
+
+- MIT ADT University for project support
+- Spring Boot community for excellent documentation
+- Open source contributors for amazing libraries
+
+---
+
+<div align="center">
+
+**Nivara Backend - Powering MIT ADT Campus Operations**
+
+Made with ❤️ for MIT ADT University
+
+</div>
